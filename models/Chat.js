@@ -1,5 +1,8 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema, Document, model, connect } from 'mongoose';
+// const Schema = mongoose.Schema;
+
+
+
 
 const chatSchema = new Schema(
   {
@@ -15,6 +18,8 @@ const chatSchema = new Schema(
   }
 );
 
-let Chat = mongoose.model("theChat", chatSchema);
+ export default model<IChat>('theChat', chatSchema);
 
-module.exports = Chat;
+// module.exports = Chat;
+
+

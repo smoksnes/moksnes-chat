@@ -1,95 +1,34 @@
-# Anonymous Real-time Chat
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Introduction
+## Getting Started
 
-> This is anonymous chat app was created for a tutorial about Nodejs, Express, and Socket.io and MongoDB.
-
-You should have a good understanding of how socket.io works at the end of this tutorial or after taking a look at the code.
-
-You will also learn how to show that someone is typing in a chat application.
-
-Here is a screenshot of it looks and functionality.
-
-![alt text](https://github.com/rexeze/anonymouse-realtime-chat-app/blob/master/screenshots/chatscreenshot.gif "Chat Screen Shot")
-
-## Code Samples
-
-> Backend
-
-```javascript
-//integrating socketio
-socket = io(http);
-
-//database connection
-const Chat = require("./models/Chat");
-const connect = require("./dbconnect");
-
-//setup event listener
-socket.on("connection", socket => {
- console.log("user connected");
-
- socket.on("disconnect", function() {
-   console.log("user disconnected");
- });
-
- //Someone is typing
- socket.on("typing", data => {
-   socket.broadcast.emit("notifyTyping", {
-     user: data.user,
-     message: data.message
-   });
- });
-
-```
-
-> Frontend
-
-```javascript
-(function() {
-  $("form").submit(function(e) {
-    let li = document.createElement("li");
-    e.preventDefault(); // prevents page reloading
-    socket.emit("chat message", $("#message").val());
-
-    messages.appendChild(li).append($("#message").val());
-    let span = document.createElement("span");
-    messages.appendChild(span).append("by " + "Anonymous" + ": " + "just now");
-
-    $("#message").val("");
-
-    return false;
-  });
-
-  socket.on("received", data => {
-    let li = document.createElement("li");
-    let span = document.createElement("span");
-    var messages = document.getElementById("messages");
-    messages.appendChild(li).append(data.message);
-    messages.appendChild(span).append("by " + "anonymous" + ": " + "just now");
-    console.log("Hello bingo!");
-  });
-})();
-```
-
-## Installation
-
-> Clone this repository and run
+First, run the development server:
 
 ```bash
-npm install
-
+npm run dev
+# or
+yarn dev
 ```
 
-Then run:
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```bash
-npm start
-```
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-goto your browser
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-and visit localhost:5000 and start chatting.
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-Note:
+## Learn More
 
-You should have mongoDB installed and started for this application to work correctly.
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
