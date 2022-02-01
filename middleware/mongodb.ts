@@ -35,7 +35,7 @@ import { connect, ConnectOptions } from "mongoose"
 
 // import { connect, ConnectionOptions } from "mongoose"
 
-const url = process.env.MONGODB_URI || "mongodb://localhost:27017/chat";
+const url = process.env.MONGODB_URI || "mongodb://localhost:62251/chat";
 
 
 console.log(url)

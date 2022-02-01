@@ -4,7 +4,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { GetStaticPropsResult, GetStaticProps } from "next";
 // import { IChat, connect, ChatModel } from '../models/Chat';
-import { IChatMessage, Chat } from '../models/Chat';
+import { IChatMessage, ChatModel } from '../models/Chat';
 import { connectToDatabase } from '../middleware/mongodb';
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
@@ -129,18 +129,20 @@ export const getServerSideProps: IHomeProps = async (context: Promise<IHomeProps
   console.log('Connecting to DB.')
   await connectToDatabase();
   console.log('Get from DB.')
-  const chats: Array<IChatMessage> = await ChatModel.find({  });
+  const chats:Array<IChatMessage> = await (await ChatModel.find({  }));
+  // const chats: Array<IChatMessage> = await ChatModel.find({  });
   console.log('Got from DB.')
 
   chats.forEach(el => {
     console.log(el.message);
   });
   console.log('Finished loading from DB.')
+  var json = JSON.stringify(chats)
 
   // let result = ChatModel.find({}) as IChat[];
   return {
       props: {
-          chats: chats,
+        chats: JSON.parse(JSON.stringify(chats))
       },
   };
 }
