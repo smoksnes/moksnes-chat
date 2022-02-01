@@ -1,7 +1,7 @@
 import mongoose, { Document, model, Model, Schema } from "mongoose"
 // const Schema = mongoose.Schema;
 
-export interface IChat extends Document {
+export interface IChatMessage {
   message: string;
   sender: string;
 }
@@ -20,7 +20,16 @@ const chatSchema = new Schema(
   }
 );
 
-export const Chat: Model<IChat> = model<IChat>('newChat', chatSchema);
+function modelAreadyDeclared () {
+  try {
+    mongoose.model('newChat5')  // it throws an error if the model is still not defined
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+export const Chat: Model<IChatMessage> = mongoose.models['newChat5'] ?? model<IChatMessage>('newChat5', chatSchema);
 
 
 

@@ -41,8 +41,8 @@ const url = process.env.MONGODB_URI || "mongodb://localhost:27017/chat";
 console.log(url)
 
 export const connectToDatabase = () => connect(url, {
-  useFindAndModify: true,
+  // useFindAndModify: true,
   useUnifiedTopology: true,
-  useCreateIndex: true,
+  // useCreateIndex: true,
   useNewUrlParser: true,
 } as ConnectOptions)
