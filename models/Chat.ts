@@ -1,7 +1,7 @@
 import mongoose, { Document, model, Model, Schema } from "mongoose"
 // const Schema = mongoose.Schema;
 
-export interface IChatMessage {
+export interface IChatMessage{
   message: string;
   sender: string;
 }
@@ -29,7 +29,7 @@ function modelAreadyDeclared () {
   }
 }
 
-export const Chat: Model<IChatMessage> = mongoose.models['newChat5'] ?? model<IChatMessage>('newChat5', chatSchema);
+export const ChatModel: Model<IChatMessage> = mongoose.models['newChat5'] ?? model<IChatMessage>('newChat5', chatSchema);
 
 
 

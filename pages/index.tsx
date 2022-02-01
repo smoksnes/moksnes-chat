@@ -8,6 +8,7 @@ import { IChatMessage, Chat } from '../models/Chat';
 import { connectToDatabase } from '../middleware/mongodb';
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import { Button, TextField } from '@mui/material';
 // import { connect } from 'http2';
 
 // import {ChatModel}from '../models/chat';
@@ -15,11 +16,24 @@ import { io } from "socket.io-client";
 // import IChat from '../models/chat'
 // import ChatModel from '../models/chat';
 
-interface HomeProps {
+interface IHomeProps {
    chats: Array<IChatMessage>
 }
 
-const Home: NextPage<HomeProps> = (props) => {
+interface IHomeState {
+  msg: string;
+}
+
+
+const Home: NextPage<IHomeProps, IHomeState> = (props) => {
+  // constructor(props: IHomeProps) {
+  //   super(props);
+
+  //   this.state = {
+  //     playOrPause: 'Play'
+  //   };
+  
+  
   console.log('foo1')
 
   // connected flag
@@ -78,6 +92,16 @@ const Home: NextPage<HomeProps> = (props) => {
     // focus after click
     // inputRef?.current?.focus();
   };
+
+  const handleClick = (event: React.MouseEvent) =>  {
+    event.preventDefault();
+    sendMessage();
+  }
+
+  const handleChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    setMsg(event.target.value);
+    // this.setState({ value: e.target.value });
+  };
   
   return (
     <div className={styles.container}>
@@ -92,66 +116,27 @@ const Home: NextPage<HomeProps> = (props) => {
            // Return the element. Also pass key     
            return (<span>{chat.message}</span>) 
         })}
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+<TextField 
+          onChange={handleChange}
+          placeholder={'Enter text'}
+        />
+        <Button variant="outlined" onClick={handleClick}>Outlined</Button>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
   )
 }
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<HomeProps>> {
+export const getServerSideProps: IHomeProps = async (context: Promise<IHomeProps>) =>  {
+  console.log('Connecting to DB.')
   await connectToDatabase();
-  const chats: Array<IChatMessage> = await Chat.find({  });
+  console.log('Get from DB.')
+  const chats: Array<IChatMessage> = await ChatModel.find({  });
+  console.log('Got from DB.')
+
+  chats.forEach(el => {
+    console.log(el.message);
+  });
+  console.log('Finished loading from DB.')
+
   // let result = ChatModel.find({}) as IChat[];
   return {
       props: {
