@@ -32,9 +32,6 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
   //   this.state = {
   //     playOrPause: 'Play'
   //   };
-  
-  
-  console.log('foo1')
 
   // connected flag
   const [connected, setConnected] = useState<boolean>(false);
@@ -43,30 +40,84 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
   const [chat, setChat] = useState<IChatMessage[]>([]);
   const [msg, setMsg] = useState<string>("");
 
-  useEffect((): any => {
-    // connect to socket server
-    console.log('foo2')
-     const socket = io();
-    //  const socket = io.connect('/api/socketio');
-    // const socket = io(); //.connect(process.env.BASE_URL, {
-    //   path: "",
-    // });
+  useEffect(() => {
+    const socket = io({ path: "/api/socketio" });
+    // setContext({ socket });
 
-    // log socket connection
-    // socket.on("connect", () => {
-    //   console.log("SOCKET CONNECTED!", socket.id);
-    //   setConnected(true);
-    // });
+    socket.on("connect", async () => {
+       console.log("SOCKET CONNECTED!", socket.id);
+      // const { socketIndex } = await post("/api/socket/session/link", {
+      //   socketId: socket.id,
+      // });
+      // setContext({ socket, socketIndex });
+    });
 
-    // // update chat on new message dispatched
-    // socket.on("message", (message: IChatMessage) => {
-    //   chat.push(message);
-    //   setChat([...chat]);
-    // });
+    socket.on("message", (message: IChatMessage) => {
+      console.log('Got message from socket');
+      console.log(message);
+      chat.push(message);
+      setChat([...chat]);
+    });
 
-    // // socket disconnet onUnmount if exists
-    // if (socket) return () => socket.disconnect();
+    socket.on("status", (message) => {
+      console.log('Got status from socket');
+      console.log(message);
+    });
+
+    socket.on("disconnect", () => {
+      // setContext({});
+    });
+
+    return () => {
+      // setContext({});
+      socket.disconnect();
+    };
   }, []);
+
+
+  // useEffect((): any => {
+  //   // connect to socket server
+  //   const socket = io();
+  //   const url = process.env.NEXT_BASE_URL as string | "";
+  //   console.log('url is', "");
+  //   // const socket = io(url, {
+  //   //   path: "/api/socketio",
+  //   // });
+  //   // const socket = io.connect('/api/socketio');
+  //   // const socket = io(); //.connect(process.env.BASE_URL, {
+  //   //   path: "",
+  //   // });
+
+  //   // log socket connection
+  //   socket.on("connect", () => {
+  //     console.log("SOCKET CONNECTED!", socket.id);
+  //     setConnected(true);
+  //   });
+
+  //   // // update chat on new message dispatched
+  //   // socket.on("message", (message: IChatMessage) => {
+  //   //   console.log('Got message from socket');
+  //   //   console.log(message);
+  //   //   chat.push(message);
+  //   //   setChat([...chat]);
+  //   // });
+
+
+  //   socket.on("status", (message) => {
+  //     console.log('Got status from socket');
+  //     console.log(message);
+  //   });
+
+  //   socket.on("message", (message) => {
+  //     console.log('Got message from socket');
+  //     console.log(message);
+  //     chat.push(message);
+  //     setChat([...chat]);
+  //   });
+
+  //   // // socket disconnet onUnmount if exists
+  //   // if (socket) return () => socket.disconnect();
+  // }, []);
 
   const sendMessage = async () => {
     if (msg) {
@@ -112,7 +163,7 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {props.chats.map((chat, i) => {     
-           console.log("Entered");                 
+          //  console.log("Entered");                 
            // Return the element. Also pass key     
            return (<span>{chat.message}</span>) 
         })}
@@ -126,18 +177,17 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
 }
 
 export const getServerSideProps: IHomeProps = async (context: Promise<IHomeProps>) =>  {
-  console.log('Connecting to DB.')
+  // console.log('Connecting to DB.')
   await connectToDatabase();
-  console.log('Get from DB.')
+  // console.log('Get from DB.')
   const chats:Array<IChatMessage> = await (await ChatModel.find({  }));
   // const chats: Array<IChatMessage> = await ChatModel.find({  });
-  console.log('Got from DB.')
+  // console.log('Got from DB.')
 
-  chats.forEach(el => {
-    console.log(el.message);
-  });
-  console.log('Finished loading from DB.')
-  var json = JSON.stringify(chats)
+  // chats.forEach(el => {
+  //   console.log(el.message);
+  // });
+  // console.log('Finished loading from DB.')
 
   // let result = ChatModel.find({}) as IChat[];
   return {
