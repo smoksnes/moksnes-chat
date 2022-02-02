@@ -1,14 +1,12 @@
-import type { NextPage, NextPageContext } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { GetStaticPropsResult, GetStaticProps } from "next";
 import { IChatMessage, ChatModel } from '../models/Chat';
-import { connectToDatabase } from '../middleware/mongodb';
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-import { Button, TextField } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import { server } from '../config';
+import ChatComponent from '../components/chat-component';
+import SendIcon from '@mui/icons-material/Send';
 
 interface IHomeProps {
    chats: Array<IChatMessage>
@@ -32,9 +30,7 @@ const Home = ({ chats }: IHomeProps) => {
 
     console.log('chats is ', chats);
     console.log('chatMessages is ', chatMessages);
-    // setChat(props.chats);
     const socket = io({ path: "/api/socketio" });
-    // setContext({ socket });
 
     socket.on("connect", async () => {
        console.log("SOCKET CONNECTED!", socket.id);
@@ -55,11 +51,9 @@ const Home = ({ chats }: IHomeProps) => {
 
     socket.on("disconnect", () => {
        setConnected(false);
-       // setContext({});
     });
 
     return () => {
-      // setContext({});
       socket.disconnect();
     };
   }, []);
@@ -103,19 +97,30 @@ const Home = ({ chats }: IHomeProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       You are connected: {connected ? (<span>JA</span>) : (<span>Nej</span>)};
-      {chatMessages.map((chat, i) => {     
+      <ChatComponent chats={chatMessages} />
+      {/* {chatMessages.map((chat, i) => {     
            return (<div>{chat.message}</div>) 
-        })}
-<TextField 
+        })} */}
+
+<Grid container spacing={2} className={styles.chatbox}>
+  <Grid item xs={8}>
+  <TextField 
           onChange={handleChange}
+          fullWidth 
           placeholder={'Enter text'}
+          variant="standard"
         />
-        <Button variant="outlined" onClick={handleClick}>Outlined</Button>
+  </Grid>
+  <Grid item xs={4}>
+  <Button variant="contained" endIcon={<SendIcon />} onClick={handleClick}>Outlined</Button>
+  </Grid>
+</Grid>
+
+        
         </div>
   )
 };
 
-// export const getServerSideProps: IHomeProps = async (context: Promise<IHomeProps>) =>  {
   export const getStaticProps = async () => {
     const url = server + '/api/chat';
     const response = await fetch(url);
