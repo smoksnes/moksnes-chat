@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { NextPage, NextPageContext } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -9,6 +9,7 @@ import { connectToDatabase } from '../middleware/mongodb';
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { Button, TextField } from '@mui/material';
+import { copyFileSync } from 'fs';
 // import { connect } from 'http2';
 
 // import {ChatModel}from '../models/chat';
@@ -21,11 +22,24 @@ interface IHomeProps {
 }
 
 interface IHomeState {
-  msg: string;
+  msg: string,
+  chats: Array<IChatMessage>
 }
 
+// const Home: NextPage<IHomeProps, IHomeState> = () => {
+//   // constructor(props: IHomeProps) {
+//   //   super(props)
+//   //   // this.state = {
+//   //   //   query: ''
+//   //   // }
+//   // }
 
-const Home: NextPage<IHomeProps, IHomeState> = (props) => {
+
+//   static getInitialProps = async ({ query }: NextPageContext) => {
+
+//   };
+const Home = ({ chats }: IHomeProps) => {
+//  const Home: NextPage<IHomeProps, IHomeState> = (props, state: IHomeState) => {
   // constructor(props: IHomeProps) {
   //   super(props);
 
@@ -34,13 +48,19 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
   //   };
 
   // connected flag
-  const [connected, setConnected] = useState<boolean>(false);
+  // const [connected, setConnected] = useState<boolean>(false);
 
-  // init chat and message
-  const [chat, setChat] = useState<IChatMessage[]>([]);
+  // // init chat and message
+  const [chatMessages, setChat] = useState<IChatMessage[]>([]);
   const [msg, setMsg] = useState<string>("");
 
+
   useEffect(() => {
+    setChat(chats);
+
+    console.log('chats is ', chats);
+    console.log('chatMessages is ', chatMessages);
+    // setChat(props.chats);
     const socket = io({ path: "/api/socketio" });
     // setContext({ socket });
 
@@ -55,8 +75,8 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
     socket.on("message", (message: IChatMessage) => {
       console.log('Got message from socket');
       console.log(message);
-      chat.push(message);
-      setChat([...chat]);
+      chats.push(message);
+      setChat([...chats]);
     });
 
     socket.on("status", (message) => {
@@ -162,10 +182,10 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {props.chats.map((chat, i) => {     
+      {chatMessages.map((chat, i) => {     
           //  console.log("Entered");                 
            // Return the element. Also pass key     
-           return (<span>{chat.message}</span>) 
+           return (<div>{chat.message}</div>) 
         })}
 <TextField 
           onChange={handleChange}
@@ -174,7 +194,7 @@ const Home: NextPage<IHomeProps, IHomeState> = (props) => {
         <Button variant="outlined" onClick={handleClick}>Outlined</Button>
         </div>
   )
-}
+};
 
 export const getServerSideProps: IHomeProps = async (context: Promise<IHomeProps>) =>  {
   // console.log('Connecting to DB.')
