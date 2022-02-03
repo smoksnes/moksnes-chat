@@ -7,6 +7,7 @@ import { Button, Grid, TextField } from '@mui/material';
 import { server } from '../config';
 import ChatComponent from '../components/chat-component';
 import SendIcon from '@mui/icons-material/Send';
+import ChatInput from '../components/chat-input';
 
 interface IHomeProps {
    chats: Array<IChatMessage>
@@ -22,7 +23,7 @@ const Home = ({ chats }: IHomeProps) => {
   const [connected, setConnected] = useState<boolean>(false);
   // // init chat and message
   const [chatMessages, setChat] = useState<IChatMessage[]>([]);
-  const [msg, setMsg] = useState<string>("");
+  
 
 
   useEffect(() => {
@@ -58,35 +59,7 @@ const Home = ({ chats }: IHomeProps) => {
     };
   }, []);
 
-  const sendMessage = async () => {
-    if (msg) {
-      const chatMsg: IChatMessage = {
-        sender: "foo",
-        message: msg,
-      };
 
-      // dispatch message to other users
-      const resp = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(chatMsg),
-      });
-
-      // reset field if OK
-      if (resp.ok) setMsg("");
-    }
-  };
-
-  const handleClick = (event: React.MouseEvent) =>  {
-    event.preventDefault();
-    sendMessage();
-  }
-
-  const handleChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    setMsg(event.target.value);
-  };
   
   return (
     <div className={styles.container}>
@@ -102,21 +75,9 @@ const Home = ({ chats }: IHomeProps) => {
            return (<div>{chat.message}</div>) 
         })} */}
 
-<Grid container spacing={2} className={styles.chatbox}>
-  <Grid item xs={8}>
-  <TextField 
-          onChange={handleChange}
-          fullWidth 
-          placeholder={'Enter text'}
-          variant="standard"
-        />
-  </Grid>
-  <Grid item xs={4}>
-  <Button variant="contained" endIcon={<SendIcon />} onClick={handleClick}>Outlined</Button>
-  </Grid>
-</Grid>
-
-        
+      <div className={styles.chatbox}>
+        <ChatInput></ChatInput>
+      </div>
         </div>
   )
 };
