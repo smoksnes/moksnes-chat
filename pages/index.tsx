@@ -28,9 +28,6 @@ const Home = ({ chats }: IHomeProps) => {
 
   useEffect(() => {
     setChat(chats);
-
-    console.log('chats is ', chats);
-    console.log('chatMessages is ', chatMessages);
     const socket = io({ path: "/api/socketio" });
 
     socket.on("connect", async () => {
@@ -51,15 +48,14 @@ const Home = ({ chats }: IHomeProps) => {
     });
 
     socket.on("disconnect", () => {
-       setConnected(false);
+      console.log('Disconnected from socket');
+      setConnected(false);
     });
 
     return () => {
       socket.disconnect();
     };
   }, []);
-
-
   
   return (
     <div className={styles.container}>
@@ -71,14 +67,10 @@ const Home = ({ chats }: IHomeProps) => {
       </Head>
       You are connected: {connected ? (<span>JA</span>) : (<span>Nej</span>)};
       <ChatComponent chats={chatMessages} />
-      {/* {chatMessages.map((chat, i) => {     
-           return (<div>{chat.message}</div>) 
-        })} */}
-
       <div className={styles.chatbox}>
         <ChatInput></ChatInput>
       </div>
-        </div>
+    </div>
   )
 };
 
